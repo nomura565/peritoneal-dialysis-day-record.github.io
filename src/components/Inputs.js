@@ -7,6 +7,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { useAtom } from 'jotai'
+import dayjs from 'dayjs';
 
 const Inputs = (props) => {
   const formSx = { m: 1 };
@@ -63,6 +64,24 @@ const Inputs = (props) => {
   const haiekikakuninChange = (event) => {
     setInputs((oldValue) => ({ ...oldValue, haiekikakunin: event.target.value }));
   };
+
+  /* 現在時間をセット */
+  const choryuzikanFromOpen = () => {
+    const initDays = dayjs(new Date());
+    setInputs((oldValue) => ({ ...oldValue, choryuzikanFrom: initDays }));
+  };
+  const choryuzikanToOpen = () => {
+    const initDays = dayjs(new Date());
+    setInputs((oldValue) => ({ ...oldValue, choryuzikanTo: initDays }));
+  };
+  const choryuzikanFrom2Open = () => {
+    const initDays = dayjs(new Date());
+    setInputs((oldValue) => ({ ...oldValue, choryuzikanFrom2: initDays }));
+  };
+  const choryuzikanTo2Open = () => {
+    const initDays = dayjs(new Date());
+    setInputs((oldValue) => ({ ...oldValue, choryuzikanTo2: initDays }));
+  };
   
   return (
     <div>
@@ -75,6 +94,7 @@ const Inputs = (props) => {
           defaultValue={inputs.choryuzikanFrom}
           onChange={choryuzikanFromChange}
           className='date-picker'
+          onOpen={choryuzikanFromOpen}
           />
         </DemoContainer>
       </LocalizationProvider>
@@ -87,6 +107,7 @@ const Inputs = (props) => {
           defaultValue={inputs.choryuzikanTo}
           onChange={choryuzikanToChange}
           className='date-picker'
+          onOpen={choryuzikanToOpen}
           />
         </DemoContainer>
       </LocalizationProvider>
@@ -101,6 +122,7 @@ const Inputs = (props) => {
           defaultValue={inputs.choryuzikanFrom2}
           onChange={choryuzikanFrom2Change}
           className='date-picker'
+          onOpen={choryuzikanFrom2Open}
           />
         </DemoContainer>
       </LocalizationProvider>
@@ -113,6 +135,7 @@ const Inputs = (props) => {
           defaultValue={inputs.choryuzikanTo2}
           onChange={choryuzikanTo2Change}
           className='date-picker'
+          onOpen={choryuzikanTo2Open}
           />
         </DemoContainer>
       </LocalizationProvider>
@@ -145,6 +168,7 @@ const Inputs = (props) => {
           label="排液量"
           value={inputs.haiekiryo}
           onChange={haiekiryoChange}
+          type="number"
         />
       </FormControl>
       <FormControl fullWidth sx={formSx}>
@@ -157,6 +181,7 @@ const Inputs = (props) => {
           label="注液量"
           value={inputs.chuekiryo}
           onChange={chuekiryoChange}
+          type="number"
         />
       </FormControl>
       <FormControl fullWidth sx={formSx}>
@@ -169,6 +194,7 @@ const Inputs = (props) => {
           label="除水量"
           value={inputs.zyosuiryo}
           onChange={zyosuiryoChange}
+          type="number"
         />
       </FormControl>
       <FormControl fullWidth sx={formSx}>
@@ -181,6 +207,7 @@ const Inputs = (props) => {
           label="排液時間"
           value={inputs.haiekizikan}
           onChange={haiekizikanChange}
+          type="number"
         />
       </FormControl>
       <FormControl fullWidth sx={formSx}>

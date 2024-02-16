@@ -14,6 +14,7 @@ import Paper from '@mui/material/Paper';
 import Inputs from './components/Inputs';
 import TemporaryDrawer from './components/TemporaryDrawer';
 import {formatDateToString} from "./components/FormatDate";
+import Tooltip from '@mui/material/Tooltip';
 
 import {DATE_FORMAT} from "./components/Const";
 
@@ -31,6 +32,8 @@ function App() {
   const [recordDate, setRecordDate] = useAtom(recordDateAtom);
 
   const [inputsList, setinputsList] = useAtom(inputsListAtomsAtom);
+
+  const [open, setOpen] = useState(false);
 
   const [inputs0, setinputs0] = useAtom(inputsList[0]);
   const [inputs1, setinputs1] = useAtom(inputsList[1]);
@@ -82,10 +85,15 @@ function App() {
     localStorage.setItem(key + "_inputs3", JSON.stringify(inputs3));
     localStorage.setItem(key + "_inputs4", JSON.stringify(inputs4));
 
+    setOpen(true);
+
+    setTimeout(() => {
+      setOpen(false);
+    }, "1500");
   };
 
   const restorationFromStarage = (_recordDate) => {
-    console.log(_recordDate);
+    //console.log(_recordDate);
     const key = "peritoneal-dialysis-day-record_" + _recordDate;
     let temporaryDrawerLS = JSON.parse(localStorage.getItem(key + "_temporaryDrawer"));
     temporaryDrawerLS = (temporaryDrawerLS == null) ? initTemporaryDrawer : temporaryDrawerLS ;
@@ -124,6 +132,7 @@ function App() {
       <TemporaryDrawer
         calculateTotal={calculateTotal}
         />
+      
       <div className="date">
         <Datetime
           locale='ja'
@@ -164,6 +173,12 @@ function App() {
               , top:'auto'*/
             }
           } elevation={3}>
+          <Tooltip title="保存しました" 
+            arrow 
+            open={open} 
+            placement="top"
+            className='tooltip'
+          ></Tooltip>
           <BottomNavigation 
             value={bottomNavValue} onChange={bottomNavChange}>
             <BottomNavigationAction

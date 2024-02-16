@@ -87,6 +87,7 @@ const TemporaryDrawer = (props) => {
           label="1日の総除水量"
           value={temporaryDrawer.sozyosuiryo}
           onChange={sozyosuiryoChange}
+          type="number"
         />
       </FormControl>
       <FormControl sx={formSx}>
@@ -99,6 +100,7 @@ const TemporaryDrawer = (props) => {
           label="体重"
           value={temporaryDrawer.weight}
           onChange={weightChange}
+          type="number"
         />
       </FormControl>
       <FormControl sx={formSx}>
@@ -111,6 +113,7 @@ const TemporaryDrawer = (props) => {
           label="尿量"
           value={temporaryDrawer.nyoryo}
           onChange={nyoryoChange}
+          type="number"
         />
       </FormControl>
       <FormControl sx={formSx}>
@@ -123,6 +126,7 @@ const TemporaryDrawer = (props) => {
           label="排便"
           value={temporaryDrawer.haiben}
           onChange={haibenChange}
+          type="number"
         />
       </FormControl>
       <FormControl sx={formSx}>
@@ -135,6 +139,7 @@ const TemporaryDrawer = (props) => {
           label="飲水量"
           value={temporaryDrawer.insuiryo}
           onChange={insuiryoChange}
+          type="number"
         />
       </FormControl>
       <FormControl sx={formSx}>

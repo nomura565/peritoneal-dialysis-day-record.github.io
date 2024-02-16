@@ -47,3 +47,14 @@
   align-items: center;
   margin-left: 8px;
 }
+
+.date-input {
+  height: 1.4375em;
+  padding: 5.5px 14px;
+  font: inherit;
+  width:85px;
+}
+
+.tooltip { 
+  text-align: center;
+}
