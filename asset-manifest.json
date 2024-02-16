@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/peritoneal-dialysis-day-record.github.io/static/css/main.a773aa51.css",
-    "main.js": "/peritoneal-dialysis-day-record.github.io/static/js/main.f303ca89.js",
+    "main.js": "/peritoneal-dialysis-day-record.github.io/static/js/main.ed7c37d4.js",
     "static/js/592.a0d214f8.chunk.js": "/peritoneal-dialysis-day-record.github.io/static/js/592.a0d214f8.chunk.js",
     "index.html": "/peritoneal-dialysis-day-record.github.io/index.html",
     "main.a773aa51.css.map": "/peritoneal-dialysis-day-record.github.io/static/css/main.a773aa51.css.map",
-    "main.f303ca89.js.map": "/peritoneal-dialysis-day-record.github.io/static/js/main.f303ca89.js.map",
+    "main.ed7c37d4.js.map": "/peritoneal-dialysis-day-record.github.io/static/js/main.ed7c37d4.js.map",
     "592.a0d214f8.chunk.js.map": "/peritoneal-dialysis-day-record.github.io/static/js/592.a0d214f8.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a773aa51.css",
-    "static/js/main.f303ca89.js"
+    "static/js/main.ed7c37d4.js"
   ]
 }
