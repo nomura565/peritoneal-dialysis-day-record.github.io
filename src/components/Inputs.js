@@ -8,28 +8,29 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { useAtom } from 'jotai'
 import dayjs from 'dayjs';
+import {convertNumber} from "./Const";
 
 const Inputs = (props) => {
   const formSx = { m: 1 };
 
   const [inputs, setInputs] = useAtom(props.inputs);
 
-  /* 貯留時間From */
+  /* 貯留時間From（排液時間） */
   const choryuzikanFromChange = (value) => {
     setInputs((oldValue) => ({ ...oldValue, choryuzikanFrom: value }));
   };
 
-  /* 貯留時間To */
+  /* 貯留時間To（排液時間） */
   const choryuzikanToChange = (value) => {
     setInputs((oldValue) => ({ ...oldValue, choryuzikanTo: value }));
   };
 
-  /* 貯留時間From */
+  /* 貯留時間From（注液時間） */
   const choryuzikanFrom2Change = (value) => {
     setInputs((oldValue) => ({ ...oldValue, choryuzikanFrom2: value }));
   };
 
-  /* 貯留時間To */
+  /* 貯留時間To（注液時間） */
   const choryuzikanTo2Change = (value) => {
     setInputs((oldValue) => ({ ...oldValue, choryuzikanTo2: value }));
   };
@@ -47,17 +48,19 @@ const Inputs = (props) => {
   /* 注液量 */
   const chuekiryoChange = (event) => {
     setInputs((oldValue) => ({ ...oldValue, chuekiryo: event.target.value }));
+    zyosuiCalc(inputs.haiekiryo, event.target.value);
   };
 
   /* 除水量 */
   const zyosuiryoChange = (event) => {
-    setInputs((oldValue) => ({ ...oldValue, zyosuiryo: event.target.value }));
+    //setInputs((oldValue) => ({ ...oldValue, zyosuiryo: event.target.value }));
     props.calculateTotal();
   };
 
   /* 排液時間 */
   const haiekizikanChange = (event) => {
     setInputs((oldValue) => ({ ...oldValue, haiekizikan: event.target.value }));
+    zyosuiCalc(event.target.value, inputs.chuekiryo);
   };
 
   /* 排液の確認 */
@@ -82,6 +85,15 @@ const Inputs = (props) => {
     const initDays = dayjs(new Date());
     setInputs((oldValue) => ({ ...oldValue, choryuzikanTo2: initDays }));
   };
+
+  /* 除水量の計算 */
+  const zyosuiCalc = (_haiekiryo, _chuekiryo) => {
+    const _convHaiekiryo = convertNumber(_haiekiryo);
+    const _convChuekiryo = convertNumber(_chuekiryo);
+    const _total = _convHaiekiryo - _convChuekiryo;
+    setInputs((oldValue) => ({ ...oldValue, zyosuiryo: _total }));
+    props.calculateTotal();
+  };
   
   return (
     <div>
@@ -89,7 +101,7 @@ const Inputs = (props) => {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer components={['TimePicker']}>
           <TimePicker 
-          label="貯留時間"
+          label="排液時間"
           value={inputs.choryuzikanFrom}
           defaultValue={inputs.choryuzikanFrom}
           onChange={choryuzikanFromChange}
@@ -102,7 +114,7 @@ const Inputs = (props) => {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer components={['TimePicker']}>
           <TimePicker 
-          label="貯留時間"
+          label="排液時間"
           value={inputs.choryuzikanTo}
           defaultValue={inputs.choryuzikanTo}
           onChange={choryuzikanToChange}
@@ -117,7 +129,7 @@ const Inputs = (props) => {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer components={['TimePicker']}>
           <TimePicker 
-          label="貯留時間"
+          label="注液時間"
           value={inputs.choryuzikanFrom2}
           defaultValue={inputs.choryuzikanFrom2}
           onChange={choryuzikanFrom2Change}
@@ -130,7 +142,7 @@ const Inputs = (props) => {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer components={['TimePicker']}>
           <TimePicker 
-          label="貯留時間"
+          label="注液時間"
           value={inputs.choryuzikanTo2}
           defaultValue={inputs.choryuzikanTo2}
           onChange={choryuzikanTo2Change}
@@ -189,6 +201,7 @@ const Inputs = (props) => {
           id="input-zyosuiryo"
           InputProps={{
             endAdornment:<InputAdornment position="end">g</InputAdornment>
+            , readOnly: true,
           }}
           aria-describedby="outlined-weight-helper-text"
           label="除水量"

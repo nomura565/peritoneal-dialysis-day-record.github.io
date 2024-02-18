@@ -37,6 +37,12 @@
   }
 }
 
+.date {
+  display: flex;
+  align-items: center;
+  justify-content:center;
+}
+
 .date-picker {
   min-width :110px !important;
   width :110px !important;

@@ -6,7 +6,7 @@ import { splitAtom } from 'jotai/utils'
 export const INPUTS_COUNT = 5;
 
 /* App */
-export const recordDateAtom = atom(formatDateToString(new Date()));
+export const recordDateAtom = atom(new Date());
 
 /* Inputs */
 const initDays = dayjs('2024-01-01T12:00');
@@ -46,3 +46,5 @@ export const initTemporaryDrawer = {
   , biko: ''
 };
 export const temporaryDrawerAtom = atom(initTemporaryDrawer);
+
+export const tabValueAtom = atom(0);

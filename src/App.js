@@ -13,16 +13,20 @@ import SaveIcon from '@mui/icons-material/Save';
 import Paper from '@mui/material/Paper';
 import Inputs from './components/Inputs';
 import TemporaryDrawer from './components/TemporaryDrawer';
-import {formatDateToString} from "./components/FormatDate";
+import {formatDateToString, addDayStringDateToDate} from "./components/FormatDate";
 import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-import {DATE_FORMAT} from "./components/Const";
+import {DATE_FORMAT, convertNumber} from "./components/Const";
 
 import { useAtom } from 'jotai'
 import { 
   recordDateAtom
   , inputsListAtomsAtom
   , temporaryDrawerAtom
+  , tabValueAtom
   , initInputs
   , initTemporaryDrawer } from './components/Atoms'
 
@@ -43,10 +47,6 @@ function App() {
 
   const [temporaryDrawer, setTemporaryDrawer] = useAtom(temporaryDrawerAtom);
 
-  const convertNumber = (value) => {
-    return (isNaN(value))? 0: Number(value);
-  }
-
   const calculateTotal = () => {
     const zyosuiryo0 = convertNumber(inputs0.zyosuiryo);
     const zyosuiryo1 = convertNumber(inputs1.zyosuiryo);
@@ -58,12 +58,12 @@ function App() {
 };
 
   const dateChange = (selectedDate) => {
-    const formatDate = formatDateToString(selectedDate);
-    setRecordDate(formatDate);
-    restorationFromStarage(formatDate);
+    //const formatDate = formatDateToString(selectedDate);
+    setRecordDate(selectedDate);
+    restorationFromStarage(formatDateToString(selectedDate));
   }
 
-  const [tabValue, setTabValue] = useState('0');
+  const [tabValue, setTabValue] = useState(tabValueAtom);
 
   const tabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -76,7 +76,8 @@ function App() {
   };
 
   const executeSave = () => {
-    const key = "peritoneal-dialysis-day-record_" + recordDate;
+    calculateTotal();
+    const key = "peritoneal-dialysis-day-record_" + formatDateToString(recordDate);
     localStorage.setItem(key + "_temporaryDrawer", JSON.stringify(temporaryDrawer));
 
     localStorage.setItem(key + "_inputs0", JSON.stringify(inputs0));
@@ -84,6 +85,8 @@ function App() {
     localStorage.setItem(key + "_inputs2", JSON.stringify(inputs2));
     localStorage.setItem(key + "_inputs3", JSON.stringify(inputs3));
     localStorage.setItem(key + "_inputs4", JSON.stringify(inputs4));
+
+    localStorage.setItem(key + "_tabValue", JSON.stringify(tabValue));
 
     setOpen(true);
 
@@ -119,11 +122,29 @@ function App() {
     inputs4LS = (inputs4LS == null) ? initInputs : inputs4LS ;
     setinputs4(inputs4LS);
 
+    let tabValueLS = JSON.parse(localStorage.getItem(key + "_tabValue"));
+    tabValueLS = (tabValueLS == null) ? '0' : tabValueLS ;
+    setTabValue(tabValueLS);
+
   };
+
+  const ArrowBackClick = () => {
+    console.log("ArrowBackClick");
+    const prevDay = addDayStringDateToDate(formatDateToString(recordDate), -1);
+    setRecordDate(prevDay);
+    restorationFromStarage(formatDateToString(prevDay));
+  }
+
+  const ArrowForwardClick = () => {
+    console.log("ArrowForwardClick");
+    const nextDay = addDayStringDateToDate(formatDateToString(recordDate), 1);
+    setRecordDate(nextDay);
+    restorationFromStarage(formatDateToString(nextDay));
+  }
 
   useEffect(() => {
     //読み込み時
-    restorationFromStarage(recordDate);
+    restorationFromStarage(formatDateToString(recordDate));
   }, [])
 
 
@@ -134,6 +155,9 @@ function App() {
         />
       
       <div className="date">
+        <IconButton aria-label="prev" onClick={ArrowBackClick}>
+          <ArrowBackIosIcon />
+        </IconButton>
         <Datetime
           locale='ja'
           inputProps={
@@ -144,8 +168,12 @@ function App() {
           timeFormat={false}
           initialValue={Today}
           closeOnSelect={true}
+          value={recordDate}
           onChange={selectedDate => {dateChange(selectedDate || Today)}}
         />
+        <IconButton aria-label="next" onClick={ArrowForwardClick}>
+          <ArrowForwardIosIcon />
+        </IconButton>
       </div>
       <Box sx={{ width: '100%', pb: 7, typography: 'body1' }}>
         <TabContext value={tabValue}>
