@@ -43,6 +43,7 @@ const Inputs = (props) => {
   /* 排液量 */
   const haiekiryoChange = (event) => {
     setInputs((oldValue) => ({ ...oldValue, haiekiryo: event.target.value }));
+    zyosuiCalc(event.target.value, inputs.chuekiryo);
   };
 
   /* 注液量 */
@@ -60,7 +61,6 @@ const Inputs = (props) => {
   /* 排液時間 */
   const haiekizikanChange = (event) => {
     setInputs((oldValue) => ({ ...oldValue, haiekizikan: event.target.value }));
-    zyosuiCalc(event.target.value, inputs.chuekiryo);
   };
 
   /* 排液の確認 */
