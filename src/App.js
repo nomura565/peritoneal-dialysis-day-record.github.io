@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Datetime from 'react-datetime';
 import "react-datetime/css/react-datetime.css";
 import Box from '@mui/material/Box';
@@ -18,6 +18,9 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import BigCalendar from './components/BigCalendar';
+import CalendarMonthTwoToneIcon from '@mui/icons-material/CalendarMonthTwoTone';
+import { Button } from "@mui/material";
 
 import {DATE_FORMAT, convertNumber} from "./components/Const";
 
@@ -37,6 +40,10 @@ function App() {
 
   const [inputsList, setinputsList] = useAtom(inputsListAtomsAtom);
 
+  //カレンダーオープンフラグ
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const bigCalendarRef = useRef();
+
   const [open, setOpen] = useState(false);
 
   const [inputs0, setinputs0] = useAtom(inputsList[0]);
@@ -55,6 +62,7 @@ function App() {
     const zyosuiryo4 = convertNumber(inputs4.zyosuiryo);
     const totalItemCount = zyosuiryo0 + zyosuiryo1 + zyosuiryo2 + zyosuiryo3 + zyosuiryo4;
     setTemporaryDrawer((oldValue) => ({ ...oldValue, sozyosuiryo: totalItemCount }));
+    return totalItemCount;
 };
 
   const dateChange = (selectedDate) => {
@@ -76,9 +84,12 @@ function App() {
   };
 
   const executeSave = () => {
-    calculateTotal();
+    const sozyosuiryo = calculateTotal();
     const key = "peritoneal-dialysis-day-record_" + formatDateToString(recordDate);
-    localStorage.setItem(key + "_temporaryDrawer", JSON.stringify(temporaryDrawer));
+    //Usestateの更新が遅いので最新の値で上書き保存
+    let _temporaryDrawer = temporaryDrawer;
+    _temporaryDrawer.sozyosuiryo = sozyosuiryo;
+    localStorage.setItem(key + "_temporaryDrawer", JSON.stringify(_temporaryDrawer));
 
     localStorage.setItem(key + "_inputs0", JSON.stringify(inputs0));
     localStorage.setItem(key + "_inputs1", JSON.stringify(inputs1));
@@ -121,6 +132,7 @@ function App() {
     let inputs4LS = JSON.parse(localStorage.getItem(key + "_inputs4"));
     inputs4LS = (inputs4LS == null) ? initInputs : inputs4LS ;
     setinputs4(inputs4LS);
+    
 
     let tabValueLS = JSON.parse(localStorage.getItem(key + "_tabValue"));
     tabValueLS = (tabValueLS == null) ? '0' : tabValueLS ;
@@ -142,6 +154,16 @@ function App() {
     restorationFromStarage(formatDateToString(nextDay));
   }
 
+  /**カレンダーオープンボタン */
+  const onClickCalendarButton = () => {
+    setCalendarOpen(true);
+    bigCalendarRef.current.onClickCalendarButton(recordDate);
+  }
+  /**カレンダークローズボタン */
+  const calendarClose = () => {
+    setCalendarOpen(false);
+  }
+
   useEffect(() => {
     //読み込み時
     restorationFromStarage(formatDateToString(recordDate));
@@ -152,8 +174,16 @@ function App() {
     <div className="App">
       <TemporaryDrawer
         calculateTotal={calculateTotal}
-        />
-      
+      />
+      <Button className="calendar-button" onClick={onClickCalendarButton}>
+        <CalendarMonthTwoToneIcon />
+      </Button>
+      <BigCalendar 
+        ref={bigCalendarRef}
+        open={calendarOpen}
+        handleClose={calendarClose}
+        fromDate={formatDateToString(recordDate)}
+      />
       <div className="date">
         <IconButton aria-label="prev" onClick={ArrowBackClick}>
           <ArrowBackIosIcon />
