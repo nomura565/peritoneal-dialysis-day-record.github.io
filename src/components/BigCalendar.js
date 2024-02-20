@@ -59,7 +59,7 @@ const BigCalendar = (props, ref) => {
     let outputDay = yyyymm + "/01";
     let monthFlg = true;
     while(monthFlg){
-      console.log(outputDay);
+      //console.log(outputDay);
       const key = LS_KEY + outputDay;
       let temporaryDrawerLS = JSON.parse(localStorage.getItem(key + "_temporaryDrawer"));
 

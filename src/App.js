@@ -132,7 +132,7 @@ function App() {
   const getPrevDayMaxSavedTab = () => {
     const prevDay = addDayStringDateToString(formatDateToString(recordDate), -1);
     const key = LS_KEY + prevDay;
-    console.log(key);
+    //console.log(key);
     //let inputs0LS = JSON.parse(localStorage.getItem(key + "_inputs0"));
     let inputs1LS = JSON.parse(localStorage.getItem(key + "_inputs1"));
     inputs1LS = (inputs1LS == null) ? getInitInputsCopy()  : inputs1LS ;
@@ -276,7 +276,7 @@ function App() {
     inputs0LS = (inputs0LS == null) ? getInitInputsCopy()  : inputs0LS ;
     inputs0LS = setTodayInitDay(inputs0LS, _recordDate);
     setInputs0(inputs0LS);
-    console.log(inputs0LS);
+    //console.log(inputs0LS);
 
     let inputs1LS = JSON.parse(localStorage.getItem(key + "_inputs1"));
     inputs1LS = (inputs1LS == null) ? getInitInputsCopy()  : inputs1LS ;
