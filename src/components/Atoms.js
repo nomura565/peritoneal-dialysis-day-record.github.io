@@ -9,7 +9,7 @@ export const INPUTS_COUNT = 5;
 export const recordDateAtom = atom(new Date());
 
 /* Inputs */
-const initDays = dayjs('2024-01-01T12:00');
+export const initDays = dayjs('2024-01-01T12:00');
 
 export const initInputs = {
   choryuzikanFrom: initDays

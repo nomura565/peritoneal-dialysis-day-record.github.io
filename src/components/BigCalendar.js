@@ -10,9 +10,12 @@ import { parseStringToDate, formatDateToYM, addDayStringDateToString, parseStrin
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { useAtom } from 'jotai'
+import { useAtom } from 'jotai';
 import { 
-  temporaryDrawerAtom } from './Atoms'
+  temporaryDrawerAtom 
+} from './Atoms';
+import {LS_KEY} from "./Const";
+  
 
 // Setup the localizer by providing the moment (or globalize, or Luxon) Object
 // to the correct localizer.
@@ -57,7 +60,7 @@ const BigCalendar = (props, ref) => {
     let monthFlg = true;
     while(monthFlg){
       console.log(outputDay);
-      const key = "peritoneal-dialysis-day-record_" + outputDay;
+      const key = LS_KEY + outputDay;
       let temporaryDrawerLS = JSON.parse(localStorage.getItem(key + "_temporaryDrawer"));
 
       if(temporaryDrawerLS !== null){

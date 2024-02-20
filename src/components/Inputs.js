@@ -8,7 +8,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { useAtom } from 'jotai'
 import dayjs from 'dayjs';
-import {convertNumber} from "./Const";
+import {convertNumber, calcDiffMinutes} from "./Const";
 
 const Inputs = (props) => {
   const formSx = { m: 1 };
@@ -18,11 +18,13 @@ const Inputs = (props) => {
   /* 貯留時間From（排液時間） */
   const choryuzikanFromChange = (value) => {
     setInputs((oldValue) => ({ ...oldValue, choryuzikanFrom: value }));
+    props.calcHaiekizikan(props.tab, calcDiffMinutes(inputs.choryuzikanTo ,value));
   };
 
   /* 貯留時間To（排液時間） */
   const choryuzikanToChange = (value) => {
     setInputs((oldValue) => ({ ...oldValue, choryuzikanTo: value }));
+    props.calcHaiekizikan(props.tab, calcDiffMinutes(value, inputs.choryuzikanFrom));
   };
 
   /* 貯留時間From（注液時間） */
