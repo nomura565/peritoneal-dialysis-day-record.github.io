@@ -9,11 +9,16 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { useAtom } from 'jotai'
 import dayjs from 'dayjs';
 import {convertNumber, calcDiffMinutes} from "./Const";
+import {formatDateToString} from "./FormatDate";
+import { 
+  recordDateAtom
+} from './Atoms'
 
 const Inputs = (props) => {
   const formSx = { m: 1 };
 
   const [inputs, setInputs] = useAtom(props.inputs);
+  const [recordDate, setRecordDate] = useAtom(recordDateAtom);
 
   /* 貯留時間From（排液時間） */
   const choryuzikanFromChange = (value) => {
@@ -23,6 +28,7 @@ const Inputs = (props) => {
 
   /* 貯留時間To（排液時間） */
   const choryuzikanToChange = (value) => {
+    //console.log(value);
     setInputs((oldValue) => ({ ...oldValue, choryuzikanTo: value }));
     props.calcHaiekizikan(props.tab, calcDiffMinutes(value, inputs.choryuzikanFrom));
   };
@@ -70,22 +76,25 @@ const Inputs = (props) => {
     setInputs((oldValue) => ({ ...oldValue, haiekikakunin: event.target.value }));
   };
 
+  const getRecordDateNowTime = () => {
+    const nowTime = dayjs(new Date()).format('HH:mm:ss');
+    //console.log(nowTime);
+    //console.log(recordDate);
+    return dayjs(formatDateToString(recordDate) + " " + nowTime);
+  }
+
   /* 現在時間をセット */
   const choryuzikanFromOpen = () => {
-    const initDays = dayjs(new Date());
-    setInputs((oldValue) => ({ ...oldValue, choryuzikanFrom: initDays }));
+    setInputs((oldValue) => ({ ...oldValue, choryuzikanFrom: getRecordDateNowTime() }));
   };
   const choryuzikanToOpen = () => {
-    const initDays = dayjs(new Date());
-    setInputs((oldValue) => ({ ...oldValue, choryuzikanTo: initDays }));
+    setInputs((oldValue) => ({ ...oldValue, choryuzikanTo: getRecordDateNowTime() }));
   };
   const choryuzikanFrom2Open = () => {
-    const initDays = dayjs(new Date());
-    setInputs((oldValue) => ({ ...oldValue, choryuzikanFrom2: initDays }));
+    setInputs((oldValue) => ({ ...oldValue, choryuzikanFrom2: getRecordDateNowTime() }));
   };
   const choryuzikanTo2Open = () => {
-    const initDays = dayjs(new Date());
-    setInputs((oldValue) => ({ ...oldValue, choryuzikanTo2: initDays }));
+    setInputs((oldValue) => ({ ...oldValue, choryuzikanTo2: getRecordDateNowTime() }));
   };
 
   /* 除水量の計算 */

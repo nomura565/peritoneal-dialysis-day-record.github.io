@@ -103,7 +103,7 @@ function App() {
     return minutes;
   }
 
-  /** 現在のタブの排液時間から次のタブの排液時間を計算しセットする */
+  /** 現在のタブの排液時間から前のタブの排液時間を計算しセットする */
   const setHaiekizikanForCurrentTab = () => {
     //なぜかtabValueは文字列で保存されてるので数値に変換
     const _tabValue = Number(tabValue);
@@ -128,22 +128,42 @@ function App() {
     return (_checkVal === "" || _checkVal === "0" || _checkVal === 0)
   }
 
-  /** 保存された最大のタブ数取得 */
-  const getMaxSavedTab = () => {
+  /** 前の日の保存された最大のタブ数取得 */
+  const getPrevDayMaxSavedTab = () => {
+    const prevDay = addDayStringDateToString(formatDateToString(recordDate), -1);
+    const key = LS_KEY + prevDay;
+    console.log(key);
+    //let inputs0LS = JSON.parse(localStorage.getItem(key + "_inputs0"));
+    let inputs1LS = JSON.parse(localStorage.getItem(key + "_inputs1"));
+    inputs1LS = (inputs1LS == null) ? getInitInputsCopy()  : inputs1LS ;
+    let inputs2LS = JSON.parse(localStorage.getItem(key + "_inputs2"));
+    inputs2LS = (inputs2LS == null) ? getInitInputsCopy()  : inputs2LS ;
+    let inputs3LS = JSON.parse(localStorage.getItem(key + "_inputs3"));
+    inputs3LS = (inputs3LS == null) ? getInitInputsCopy()  : inputs3LS ;
+    let inputs4LS = JSON.parse(localStorage.getItem(key + "_inputs4"));
+    //if(inputs4LS == null){
+    //  console.log("inputs4LS is null");
+    //}
+    
+    inputs4LS = (inputs4LS == null) ? getInitInputsCopy()  : inputs4LS ;
+    //console.log(inputs4LS);
+    //console.log(getInitInputsCopy() );
     //貯留時間To（排液時間）が初期値でないものを保存されたMAXのタブと判断する
     let maxSavedTab = 0;
-    if(!isInitDays(inputs1.choryuzikanTo)){
+    if(!isInitDaysCertainDay(inputs1LS.choryuzikanTo, prevDay)){
       maxSavedTab = 1;
     }
-    if(!isInitDays(inputs2.choryuzikanTo)){
+    if(!isInitDaysCertainDay(inputs2LS.choryuzikanTo, prevDay)){
       maxSavedTab = 2;
     }
-    if(!isInitDays(inputs3.choryuzikanTo)){
+    if(!isInitDaysCertainDay(inputs3LS.choryuzikanTo, prevDay)){
       maxSavedTab = 3;
     }
-    if(!isInitDays(inputs4.choryuzikanTo)){
-      //console.log("recordDate"+dayjs(recordDate).format('YYYY-MM-DD 12:00:00'));
-      //console.log("recordDate"+dayjs(inputs4.choryuzikanTo).format('YYYY-MM-DD HH:mm:ss'));
+    if(!isInitDaysCertainDay(inputs4LS.choryuzikanTo, prevDay)){
+      //console.log("recordDate"+dayjs(prevDay).format('YYYY-MM-DD 12:00:00'));
+      //console.log("dayjs"+dayjs(inputs4LS.choryuzikanTo).format('YYYY-MM-DD HH:mm:ss'));
+      //console.log(dayjs(inputs4LS.choryuzikanTo));
+      //console.log("dayjs"+inputs4LS.choryuzikanTo.format('YYYY-MM-DD HH:mm:ss'));
       maxSavedTab = 4;
     }
     return maxSavedTab;
@@ -169,27 +189,27 @@ function App() {
 
     setOpen(true);
 
-    executeSaveNextDay();
+    executeSavePrevDay();
 
     setTimeout(() => {
       setOpen(false);
     }, "1500");
   };
 
-  /** 次の日の排液時間を保存する */
-  const executeSaveNextDay = () => {
+  /** 前の日の排液時間を保存する */
+  const executeSavePrevDay = () => {
     
-    const maxSavedTab = getMaxSavedTab();
-    console.log("getMaxSavedTab:"+maxSavedTab);
+    const key = LS_KEY + addDayStringDateToString(formatDateToString(recordDate), -1);
+    const maxSavedTab = getPrevDayMaxSavedTab();
+    //console.log("getPrevDayMaxSavedTab:"+maxSavedTab);
 
-    const key = LS_KEY + addDayStringDateToString(formatDateToString(recordDate), 1);
-    const minutes = getHaiekizikanFromCertainTab(maxSavedTab);
-    console.log("minutes:"+minutes);
-    let inputs0LS = JSON.parse(localStorage.getItem(key + "_inputs0"));
-    inputs0LS = (inputs0LS == null) ? initInputs : inputs0LS ;
-    inputs0LS.haiekizikan = minutes;
-
-    localStorage.setItem(key + "_inputs0", JSON.stringify(inputs0LS));
+    let inputsPrevDayMaxSavedTabLS = JSON.parse(localStorage.getItem(key + "_inputs" + maxSavedTab));
+    inputsPrevDayMaxSavedTabLS = (inputsPrevDayMaxSavedTabLS == null) ? getInitInputsCopy() : inputsPrevDayMaxSavedTabLS ;
+    const minutes = getHaiekizikanFromCertainTab(0);
+    //console.log("minutes:"+minutes);
+    inputsPrevDayMaxSavedTabLS.haiekizikan = minutes;
+    localStorage.setItem(key + "_inputs" + maxSavedTab, JSON.stringify(inputsPrevDayMaxSavedTabLS));
+    localStorage.setItem(key + "_tabValue", JSON.stringify(maxSavedTab.toString()));
   }
 
   /** 日付が初期値かの判定 */
@@ -204,9 +224,21 @@ function App() {
     return false;
   }
 
+  /** 日付が初期値かの判定 */
+  const isInitDaysCertainDay = (_checkDay, certainDay) => {
+    if(initDays.format('YYYY-MM-DD HH:mm:ss') === dayjs(_checkDay).format('YYYY-MM-DD HH:mm:ss')){
+      return true;
+    }
+    if(dayjs(certainDay).format('YYYY-MM-DD 12:00:00') === dayjs(_checkDay).format('YYYY-MM-DD HH:mm:ss')){
+      return true;
+    }
+
+    return false;
+  }
+
   /** 初期値をrecordDateの12時に更新する */
-  const setTodayInitDay = (_inputsLS) => {
-    const todayInitDay = dayjs(dayjs(recordDate).format('YYYY-MM-DD 12:00:00'));
+  const setTodayInitDay = (_inputsLS, _recordDate) => {
+    const todayInitDay = dayjs(dayjs(_recordDate).format('YYYY-MM-DD 12:00:00'));
     let _tmpInputsLS = _inputsLS;
     if(isInitDays(_tmpInputsLS.choryuzikanFrom)){
       _tmpInputsLS.choryuzikanFrom = todayInitDay;
@@ -223,38 +255,47 @@ function App() {
     return _tmpInputsLS;
   }
 
+  const getInitInputsCopy = () => {
+    return Object.assign({}, initInputs);
+  }
+
+  const getInitTemporaryDrawerCopy = () => {
+    return Object.assign({}, initTemporaryDrawer);
+  }
+
   /** localStaregeから値を復元する */
   const restorationFromStarage = (_recordDate) => {
     //console.log(_recordDate);
     const key = LS_KEY + _recordDate;
     let temporaryDrawerLS = JSON.parse(localStorage.getItem(key + "_temporaryDrawer"));
-    temporaryDrawerLS = (temporaryDrawerLS == null) ? initTemporaryDrawer : temporaryDrawerLS ;
+    temporaryDrawerLS = (temporaryDrawerLS == null) ? getInitTemporaryDrawerCopy() : temporaryDrawerLS ;
     
     setTemporaryDrawer(temporaryDrawerLS);
 
     let inputs0LS = JSON.parse(localStorage.getItem(key + "_inputs0"));
-    inputs0LS = (inputs0LS == null) ? initInputs : inputs0LS ;
-    inputs0LS = setTodayInitDay(inputs0LS);
+    inputs0LS = (inputs0LS == null) ? getInitInputsCopy()  : inputs0LS ;
+    inputs0LS = setTodayInitDay(inputs0LS, _recordDate);
     setInputs0(inputs0LS);
+    console.log(inputs0LS);
 
     let inputs1LS = JSON.parse(localStorage.getItem(key + "_inputs1"));
-    inputs1LS = (inputs1LS == null) ? initInputs : inputs1LS ;
-    inputs1LS = setTodayInitDay(inputs1LS);
+    inputs1LS = (inputs1LS == null) ? getInitInputsCopy()  : inputs1LS ;
+    inputs1LS = setTodayInitDay(inputs1LS, _recordDate);
     setInputs1(inputs1LS);
 
     let inputs2LS = JSON.parse(localStorage.getItem(key + "_inputs2"));
-    inputs2LS = (inputs2LS == null) ? initInputs : inputs2LS ;
-    inputs2LS = setTodayInitDay(inputs2LS);
+    inputs2LS = (inputs2LS == null) ? getInitInputsCopy()  : inputs2LS ;
+    inputs2LS = setTodayInitDay(inputs2LS, _recordDate);
     setInputs2(inputs2LS);
 
     let inputs3LS = JSON.parse(localStorage.getItem(key + "_inputs3"));
-    inputs3LS = (inputs3LS == null) ? initInputs : inputs3LS ;
-    inputs3LS = setTodayInitDay(inputs3LS);
+    inputs3LS = (inputs3LS == null) ? getInitInputsCopy()  : inputs3LS ;
+    inputs3LS = setTodayInitDay(inputs3LS, _recordDate);
     setInputs3(inputs3LS);
 
     let inputs4LS = JSON.parse(localStorage.getItem(key + "_inputs4"));
-    inputs4LS = (inputs4LS == null) ? initInputs : inputs4LS ;
-    inputs4LS = setTodayInitDay(inputs4LS);
+    inputs4LS = (inputs4LS == null) ? getInitInputsCopy()  : inputs4LS ;
+    inputs4LS = setTodayInitDay(inputs4LS, _recordDate);
     setInputs4(inputs4LS);
 
     let tabValueLS = JSON.parse(localStorage.getItem(key + "_tabValue"));
@@ -265,7 +306,7 @@ function App() {
 
   /** 日付進むイベント */
   const ArrowBackClick = () => {
-    console.log("ArrowBackClick");
+    //console.log("ArrowBackClick");
     const prevDay = addDayStringDateToDate(formatDateToString(recordDate), -1);
     setRecordDate(prevDay);
     restorationFromStarage(formatDateToString(prevDay));
@@ -273,7 +314,7 @@ function App() {
 
   /** 日付戻るイベント */
   const ArrowForwardClick = () => {
-    console.log("ArrowForwardClick");
+    //console.log("ArrowForwardClick");
     const nextDay = addDayStringDateToDate(formatDateToString(recordDate), 1);
     setRecordDate(nextDay);
     restorationFromStarage(formatDateToString(nextDay));
@@ -294,19 +335,19 @@ function App() {
 
     switch(tab){
       case 0:
-        setInputs1((oldValue) => ({ ...oldValue, haiekizikan: minutes }));
+        //前の日の排液時間を更新すべきだが、ここでは更新せず保存ボタン押下時に更新する
         break;
       case 1:
-        setInputs2((oldValue) => ({ ...oldValue, haiekizikan: minutes }));
+        setInputs0((oldValue) => ({ ...oldValue, haiekizikan: minutes }));
         break;
       case 2:
-        setInputs3((oldValue) => ({ ...oldValue, haiekizikan: minutes }));
+        setInputs1((oldValue) => ({ ...oldValue, haiekizikan: minutes }));
         break;
       case 3:
-        setInputs4((oldValue) => ({ ...oldValue, haiekizikan: minutes }));
+        setInputs2((oldValue) => ({ ...oldValue, haiekizikan: minutes }));
         break;
       case 4:
-        //次の日の排液時間を更新すべきだが、ここでは更新せず保存ボタン押下時に更新する
+        setInputs3((oldValue) => ({ ...oldValue, haiekizikan: minutes }));
         break;
     }
   }
