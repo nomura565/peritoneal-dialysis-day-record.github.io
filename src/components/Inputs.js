@@ -101,7 +101,7 @@ const Inputs = (props) => {
   const zyosuiCalc = (_haiekiryo, _chuekiryo) => {
     const _convHaiekiryo = convertNumber(_haiekiryo);
     const _convChuekiryo = convertNumber(_chuekiryo);
-    const _total = _convHaiekiryo - _convChuekiryo;
+    const _total = (_haiekiryo === "") ? "" : _convHaiekiryo - _convChuekiryo;
     setInputs((oldValue) => ({ ...oldValue, zyosuiryo: _total }));
     props.calculateTotal();
   };
