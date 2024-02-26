@@ -2,7 +2,7 @@
 
 腹膜透析を受けている人が日別記録するためのアプリです。
 github pagesで動作しています。
-https://github.com/nomura565/peritoneal-dialysis-day-record.github.io
+https://nomura565.github.io/peritoneal-dialysis-day-record.github.io/
 
 保存ボタン押下でLocalStrageに日々の記録を保存します。
 
